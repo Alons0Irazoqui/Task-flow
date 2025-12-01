@@ -43,11 +43,6 @@ def crear_tabla():
     
     conn.commit()
     conn.close()
-    
-
-
-
-
 
 class DBManager:
     def __init__(self):
@@ -90,4 +85,40 @@ class DBManager:
         
         conn.close()
         return proyectos
+    
+    def obtener_tareas(self, estado= None):
+        conn = get_connection()
+        cursor = conn.cursor()
         
+        sql = "SELECT * FROM tareas"
+        params = [];
+        
+        if estado:
+            sql += " WHERE estado = ?"
+            params.append(estado)
+        
+        sql += " ORDER BY fecha_limite ASC"
+        
+        cursor.execute(sql, params)
+        filas = cursor.fetchall()
+        conn.close()
+    
+        tareas = []
+        for fila in filas:
+            tarea = Tarea(
+                id=fila['id'],
+                titulo=fila['titulo'],
+                descripcion=fila['descripcion'],
+                fecja_creacion=fila['fecha_creacion'],
+                fecha_limite=fila['fecha_limite'],
+                prioridad=fila['prioridad'],
+                estado=fila['estado'],
+                proyecto_id=fila['proyecto_id']
+            )
+            tareas.append(tarea)
+        return tareas
+    
+# Creando la base de datos y las tablas al importar el módulo
+if __name__ == "__main__":
+    crear_tabla()
+    print(f"Base de datos '{DATABASE_NAME}' creada o verificada correctamente.")

@@ -1,9 +1,11 @@
 from datetime import datetime
 
+
 class Proyecto:
     """
     Clase que representa un proyecto. Usa POO: Encapsulamiento con guion bajo.
     """
+
     def __init__(self, nombre: str, descripcion: str = "", id: int = None, estado: str = "Activo"):
         # Atributos internos (encapsulados)
         self._id = id
@@ -21,7 +23,7 @@ class Proyecto:
     def id(self, valor):
         """Setter necesario para que la DB pueda asignar el ID después de la creación."""
         self._id = valor
-        
+
     def to_dict(self):
         """Convierte el objeto a un diccionario, útil para Flask y la DB."""
         return {
@@ -38,15 +40,19 @@ class Tarea:
     Clase que representa una tarea individual.
     Aplica POO: Encapsulamiento y un método que modela un comportamiento.
     """
+
     def __init__(self, titulo: str, fecha_limite: str, prioridad: str,
                  proyecto_id: int, descripcion: str = "", id: int = None,
-                 estado: str = "Pendiente"):
-        
+                 estado: str = "Pendiente", fecha_creacion: str = None):
+
         self._id = id
         self._titulo = titulo
         self._descripcion = descripcion
-        self._fecha_creacion = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self._fecha_limite = fecha_limite 
+        # Si no se proporciona fecha_creacion, se genera una nueva (para tareas nuevas)
+        # Si se proporciona, se usa esa (para tareas cargadas de la DB)
+        self._fecha_creacion = fecha_creacion if fecha_creacion else datetime.now(
+        ).strftime("%Y-%m-%d %H:%M:%S")
+        self._fecha_limite = fecha_limite
         self._prioridad = prioridad
         self._estado = estado
         self._proyecto_id = proyecto_id
@@ -66,7 +72,7 @@ class Tarea:
             self._estado = "Completada"
             return True
         return False
-        
+
     def to_dict(self):
         return {
             'id': self._id,
@@ -78,11 +84,3 @@ class Tarea:
             'estado': self._estado,
             'proyecto_id': self._proyecto_id
         }
-
-
-
-
-        
-        
-        
-        
